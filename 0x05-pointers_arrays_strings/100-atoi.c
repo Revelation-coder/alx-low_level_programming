@@ -16,21 +16,21 @@ return "99Hello!";
 }
 int main() {
 	/*Converting a numeric string */
-	char str[10];
-	char str2[10];
-	char str3[10];
+	char* str[10];
+	char* str2[10];
+	char* str3[10];
 	int x;
-    	char* str[10] = char* str();
+    	str[10] = str();
   	x = atoi(str);
 	printf("Converting '122': %d\n", x);
 
 	/* Converting an alphanumeric string */
-	char* str2[10] = char* str2();
+	str2[10] = str2();
   	x = atoi(str2);
         printf("Converting 'Hello!': %d\n", x);
 
         /* Converting a partial string */
-        char* str3[10] = char* str3();
+        str3[10] = str3();
         x = atoi(str3);
         printf("Converting '99Hello!': %d\n", x);
         return 0;
