@@ -7,6 +7,10 @@
  */
 int main() {
 	/*Converting a numeric string */
+	char str[10];
+	char str2[10];
+	char str3[10];
+	int x;
     	char str[10] = "122";
   	int x = atoi(str);
 	printf("Converting '122': %d\n", x);
