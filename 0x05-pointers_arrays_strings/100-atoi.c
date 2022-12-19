@@ -5,6 +5,15 @@
  *
  * Return: Always 0.
  */
+char* str[10]{
+return "122";
+}
+char* str2[10]{
+return "Hello!";
+}
+char* str[10]{
+return "99Hello!";
+}
 int main() {
 	/*Converting a numeric string */
 	char str[10];
