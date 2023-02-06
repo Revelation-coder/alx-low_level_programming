@@ -1,85 +1,52 @@
-#include <stdio.h>
-#include "holberton.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-/**
- * _error - Read file.
- * @e: Error number
- * @filename: File name
- */
-void _error(int e, char *filename)
-{
-	if (e == 98)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", filename);
-		exit(98);
-	}
-	if (e == 99)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", filename);
-		exit(99);
-	}
-}
-/**
- * cp - Copies the content of a file to another file.
- * @file_from: Name of the source file.
- * @file_to: Name of the destination file.
- * Return: 1 on success, -1 on failure.
- */
-void cp(char *file_from, char *file_to)
-{
-	int fd_read, res_read, fd_write, res_write;
-	char *buf[1024];
+#include "main.h"
 
-	/* READ */
-	fd_read = open(file_from, O_RDONLY);
-	if (fd_read < 0)
-		_error(98, file_from);
-	/* WRITE */
-	fd_write = open(file_to, O_CREAT | O_WRONLY | O_TRUNC, 0664);
-	if (fd_write < 0)
-	{
-		close(fd_read);
-		_error(99, file_to);
-	}
-	do {
-		/* READ */
-		res_read = read(fd_read, buf, 1024);
-		if (res_read < 0)
-			_error(98, file_from);
-		/* WRITE */
-		res_write = write(fd_write, buf, res_read);
-		if (res_write < res_read)
-			_error(99, file_to);
-	}	while (res_write == 1024);
-	if (close(fd_read) < 0)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_read);
-		close(fd_write);
-		exit(100);
-	}
-	if (close(fd_write) < 0)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_write);
-		exit(100);
-	}
-}
 /**
- * main - Copies the content of a file to another file.
- * @ac: Argument count
- * @av: argument values
- * Return: 0 on succes, -1 on error.
+ * main - copies the content of a file to another file
+ * @argc: number of arguments passed to the program
+ * @argv: array of arguments
+ *
+ * Return: Always 0 (Success)
  */
-int main(int ac, char *av[])
+int main(int argc, char *argv[])
 {
-	if (ac != 3)
+	int fd_r, fd_w, x, m, n;
+	char buf[BUFSIZ];
+
+	if (argc != 3)
 	{
 		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
 		exit(97);
 	}
-	cp(av[1], av[2]);
+	fd_r = open(argv[1], O_RDONLY);
+	if (fd_r < 0)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+		exit(98);
+	}
+	fd_w = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
+	while ((x = read(fd_r, buf, BUFSIZ)) > 0)
+	{
+		if (fd_w < 0 || write(fd_w, buf, x) != x)
+		{
+			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
+			close(fd_r);
+			exit(99);
+		}
+	}
+	if (x < 0)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+		exit(98);
+	}
+	m = close(fd_r);
+	n = close(fd_w);
+	if (m < 0 || n < 0)
+	{
+		if (m < 0)
+			dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_r);
+		if (n < 0)
+			dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_w);
+		exit(100);
+	}
 	return (0);
 }
