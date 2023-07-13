@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "search_algos.h"
 
 /**
@@ -11,45 +9,43 @@
  */
 skiplist_t *linear_skip(skiplist_t *list, int value)
 {
-	skiplist_t *express;
+    skiplist_t *curr, *prev;
 
-	if (list == NULL)
-		return (NULL);
+    if (list == NULL)
+        return (NULL);
 
-	express = list->express;
+    curr = list;
+    while (curr)
+    {
+        prev = curr;
+        if (curr->express)
+        {
+            printf("Value checked at index [%lu] = [%d]\n", curr->express->index, curr->express->n);
+            if (curr->express->n >= value)
+            {
+                printf("Value found between indexes [%lu] and [%lu]\n",
+                       curr->index, curr->express->index);
+                break;
+            }
+            curr = curr->express;
+        }
+        else
+        {
+            while (curr->next)
+                curr = curr->next;
+            printf("Value found between indexes [%lu] and [%lu]\n",
+                   prev->index, curr->index);
+            break;
+        }
+    }
 
-	printf("Value checked at index [%lu] = [%d]\n", express->index, express->n);
+    while (prev && prev->index <= curr->index)
+    {
+        printf("Value checked at index [%lu] = [%d]\n", prev->index, prev->n);
+        if (prev->n == value)
+            return (prev);
+        prev = prev->next;
+    }
 
-	while (express && express->n < value)
-	{
-		list = express;
-		express = express->express;
-		if (express != NULL)
-			printf("Value checked at index [%lu] = [%d]\n", express->index, express->n);
-	}
-
-	printf("Value found between indexes [%lu] and [%lu]\n", list->index, express->index);
-
-	return (linear_search(list, express, value));
-}
-
-/**
- * linear_search - Searches for a value in a linear range of the skip list
- * @list: Pointer to the head of the skip list range to search in
- * @express: Pointer to the last node of the skip list range
- * @value: Value to search for
- *
- * Return: Pointer to the node where value is located, or NULL if not found
- */
-skiplist_t *linear_search(skiplist_t *list, skiplist_t *express, int value)
-{
-	while (list && list->n <= value)
-	{
-		printf("Value checked at index [%lu] = [%d]\n", list->index, list->n);
-		if (list->n == value)
-			return (list);
-		list = list->next;
-	}
-
-	return (NULL);
+    return (NULL);
 }

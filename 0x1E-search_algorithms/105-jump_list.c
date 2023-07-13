@@ -1,41 +1,40 @@
 #include "search_algos.h"
 
 /**
- * linear_skip - Searches using linear skip.
- * @list: A pointer to the  head of the linked list to search.
- * @value: The value to search for.
+ * jump_list - Searches for a value in a sorted list of integers using jump search algorithm
+ * @list: Pointer to the head of the list to search in
+ * @size: Number of nodes in the list
+ * @value: Value to search for
  *
- * Return: NULL, a pointer to the first node where the value is located.
+ * Return: Pointer to the first node where value is located, or NULL if not found
  */
-skiplist_t *linear_skip(skiplist_t *list, int value)
+listint_t *jump_list(listint_t *list, size_t size, int value)
 {
-	skiplist_t *node, *jump;
+    size_t step = sqrt(size);
+    listint_t *prev = NULL;
+    listint_t *curr = list;
 
-	if (!list)
-		return (NULL);
+    if (list == NULL)
+        return (NULL);
 
-	for (node = jump = list; jump->next && jump->n < value;)
-	{
-		node = jump;
-		if (jump->express)
-		{
-			jump = jump->express;
-			printf("Value checked at index [%ld] = [%d]\n",
-					jump->index, jump->n);
-		}
-		else
-		{
-			while (jump->next)
-				jump = jump->next;
-		}
-	}
+    while (curr->index < size && curr->n < value)
+    {
+        prev = curr;
+        for (size_t i = 0; curr->next && i < step; ++i)
+            curr = curr->next;
 
-	printf("Value found between indexes [%ld] and [%ld]\n",
-			node->index, jump->index);
+        printf("Value checked at index [%lu] = [%d]\n", curr->index, curr->n);
+    }
 
-	for (; node->index < jump->index && node->n < value; node = node->next)
-		printf("Value checked at index [%ld] = [%d]\n", node->index, node->n);
-	printf("Value checked at index [%ld] = [%d]\n", node->index, node->n);
+    printf("Value found between indexes [%lu] and [%lu]\n", prev->index, curr->index);
 
-	return (node->n == value ? node : NULL);
+    while (prev && prev->index <= curr->index)
+    {
+        printf("Value checked at index [%lu] = [%d]\n", prev->index, prev->n);
+        if (prev->n == value)
+            return (prev);
+        prev = prev->next;
+    }
+
+    return (NULL);
 }
